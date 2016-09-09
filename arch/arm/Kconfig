@@ -657,9 +657,6 @@ config ARCH_SUNXI
 	select SPL_STACK_R if SUPPORT_SPL
 	select SPL_SYS_MALLOC_SIMPLE if SUPPORT_SPL
 	select SYS_NS16550
-	select USB
-	select USB_STORAGE
-	select USB_KEYBOARD
 	select USE_TINY_PRINTF
 
 config TARGET_TS4800

@@ -314,8 +314,17 @@
 #define BOOTENV_BOOT_TARGETS \
 	"boot_targets=" BOOT_TARGET_DEVICES(BOOTENV_DEV_NAME) "\0"
 
+
+
+
 #define BOOTENV_DEV(devtypeu, devtypel, instance) \
 	BOOTENV_DEV_##devtypeu(devtypeu, devtypel, instance)
+
+/*	"splashpos=m,m\0" \
+	"splashimage=66000000\0" \
+	"loadsplash=ext4load  mmc 0 ${splashimage} /boot/boot.bmp || fatload  mmc 0 ${splashimage} boot.bmp; bmp d ${splashimage}\0" \*/
+
+
 #define BOOTENV \
 	BOOTENV_SHARED_HOST \
 	BOOTENV_SHARED_MMC \
@@ -390,7 +399,9 @@
 		"done\0"
 
 #ifndef CONFIG_BOOTCOMMAND
+/*#define CONFIG_BOOTCOMMAND "run loadsplash; run distro_bootcmd"*/
 #define CONFIG_BOOTCOMMAND "run distro_bootcmd"
+
 #endif
 
 #endif  /* _CONFIG_CMD_DISTRO_BOOTCMD_H */

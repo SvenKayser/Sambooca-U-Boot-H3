@@ -156,7 +156,17 @@ config SPI_BOOT
 	  booted via SPI flash. This is not a must, some SoCs need this,
 	  some not.
 
+config USB_MASS_STORAGE_BOOT
+        bool "Prefer booting from USB if available"
+        depends on USB_STORAGE
+        default n
+        help
+         Enabling this will make U-Boot probe for possible USB device to
+         boot from and prefer booting from them if possible
+
 endmenu
+
+
 
 config BOOTDELAY
 	int "delay in seconds before automatically booting"

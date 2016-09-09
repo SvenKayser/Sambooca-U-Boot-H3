@@ -475,6 +475,11 @@ void sunxi_board_init(void)
 	int power_failed = 0;
 	unsigned long ramsize;
 
+#ifdef CONFIG_MACH_SUN8I_H3
+	/* turn on power LED (PL10) on H3 boards */
+	gpio_direction_output(SUNXI_GPL(10), 1);
+#endif
+
 #ifdef CONFIG_SY8106A_POWER
 	power_failed = sy8106a_set_vout1(CONFIG_SY8106A_VOUT1_VOLT);
 #endif

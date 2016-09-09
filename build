@@ -1,0 +1,79 @@
+#!/bin/bash
+task(){
+	echo -e "[ .. ] \033[1;33m$1\033[0m"  | tee -a build.log
+}
+tdone(){
+	echo -e "[ \033[1;32mok\033[0m ] \033[0;32mDone\033[0m\n"  | tee -a build.log
+}
+terror(){
+	echo -e "[ \033[1;31m!!\033[0m ] \033[0;31m$1\033[0m\n"  | tee -a build.log
+}
+
+tinfo(){
+	echo -e "[ .. ]		\033[0;33m$1\033[0m"   | tee -a build.log
+}
+
+export CFLAGS="-pipe -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
+
+sbcbin=Sambooca-U-Boot-SPL-sunxi-binary
+sbccfg=samboocacfg
+if [ -z "$*" ]; then
+	cat << EOT
+Available boards to build:
+	bananpi-m2plus
+	beelink-x2
+	nanopi-m1
+	nanopi-neo
+	orangepi-2
+	orangepi-lite
+	orangepi-one
+	orangepi-pc
+	orangepi-pcplus
+	orangepi-plus
+
+You can build any of these at once, or just build "all"
+
+EOT
+	exit 0
+fi
+
+if [ "$*" = "all" ]; then
+	platforms=("bananapi-m2plus" "beelink-x2" "nanopi-m1" "nanopi-neo" "orangepi-2" "orangepi-lite" "orangepi-pc" "orangepi-pcplus" "orangepi-one")
+else	
+	IFS=" "; read -ra platforms <<< "$@";
+fi
+
+touch build.log
+
+
+cp .config .config.sav
+for pf in "${platforms[@]}"
+do
+	task "cardboot for ${pf}"
+	if [ ! -f $sbccfg/$pf ]; then
+		terror "No configuration for $pf";
+		exit 1
+	fi
+	cat ${sbccfg}/h3base ${sbccfg}/${pf} > .config
+	make -s CROSS_COMPILE=armv7a-hardfloat-linux-gnueabihf- ARCH="arm" >> build.log 2>&1
+	if [ ! $? -eq 0 ]; then
+		terror Build for cardboot/$pf-u-boot-sunxi-with-spl.bin failed. Check build.log for details.
+	fi
+	cp u-boot-sunxi-with-spl.bin ${sbcbin}/cardboot/${pf}-u-boot-sunxi-with-spl.bin
+	tdone
+done
+
+for pf in "${platforms[@]}"
+do
+	task "usbboot for ${pf}"
+	cat ${sbccfg}/h3base ${sbccfg}/${pf} ${sbccfg}/usbboot > .config
+	make -s CROSS_COMPILE=armv7a-hardfloat-linux-gnueabihf- ARCH="arm" >> build.log 2>&1
+        if [ ! $? -eq 0 ]; then
+                terror Build for usbboot/$pf-u-boot-sunxi-with-spl.bin failed. Check build.log for details.
+        fi
+	cp u-boot-sunxi-with-spl.bin ${sbcbin}/usbboot/${pf}-u-boot-sunxi-with-spl.bin
+	tdone
+done
+
+#cp .config.sav .config
+
