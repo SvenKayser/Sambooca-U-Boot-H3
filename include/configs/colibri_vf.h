@@ -39,7 +39,6 @@
 /* Allow to overwrite serial and ethaddr */
 #define CONFIG_ENV_OVERWRITE
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
-#define CONFIG_VERSION_VARIABLE
 #define CONFIG_BAUDRATE			115200
 
 /* NAND support */
@@ -225,7 +224,6 @@
 #define CONFIG_SYS_DFU_DATA_BUF_SIZE (1024 * 1024)
 
 /* USB Storage */
-#define CONFIG_USB_STORAGE
 #define CONFIG_USB_FUNCTION_MASS_STORAGE
 
 #endif /* __CONFIG_H */
